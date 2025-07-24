@@ -7,7 +7,6 @@ import { usePDVProducts } from '../../hooks/usePDV';
 import { useStore2Sales, useStore2Cart } from '../../hooks/useStore2Sales';
 import { useScale } from '../../hooks/useScale';
 import { PesagemModal } from '../PDV/PesagemModal';
-import { useImageUpload } from '../../hooks/useImageUpload';
 import { X } from 'lucide-react';
 
 interface Store2PDVSalesScreenProps {
