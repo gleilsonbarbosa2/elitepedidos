@@ -17,7 +17,10 @@ const Store2UnifiedAttendancePage: React.FC = () => {
       icon: Store,
       color: 'from-blue-500 to-blue-600',
       hoverColor: 'hover:from-blue-600 hover:to-blue-700',
-      onClick: () => navigate('/loja2')
+      onClick: () => {
+        // Implementar PDV da Loja 2 ou redirecionar para página específica
+        alert('Sistema de vendas da Loja 2 em desenvolvimento. Use o menu principal do PDV por enquanto.');
+      }
     },
     {
       id: 'cash',
@@ -26,7 +29,10 @@ const Store2UnifiedAttendancePage: React.FC = () => {
       icon: CreditCard,
       color: 'from-green-500 to-green-600',
       hoverColor: 'hover:from-green-600 hover:to-green-700',
-      onClick: () => navigate('/caixa_loja2')
+      onClick: () => {
+        // Implementar controle de caixa da Loja 2 ou redirecionar
+        alert('Controle de caixa da Loja 2 em desenvolvimento. Use o menu principal do PDV por enquanto.');
+      }
     },
     {
       id: 'settings',
@@ -35,7 +41,7 @@ const Store2UnifiedAttendancePage: React.FC = () => {
       icon: Settings,
       color: 'from-purple-500 to-purple-600',
       hoverColor: 'hover:from-purple-600 hover:to-purple-700',
-      onClick: () => navigate('/configuracoes_loja2')
+      onClick: () => navigate('/gerenciamento_loja2')
     }
   ];
 
