@@ -133,6 +133,7 @@ export const useStore2PDVCashRegister = () => {
           delivery_count: 0,
           total_all_sales: salesTotal,
           sales: {}
+        });
       } else {
         console.log('ℹ️ Nenhum caixa da Loja 2 aberto no momento');
         setCurrentRegister(null);
