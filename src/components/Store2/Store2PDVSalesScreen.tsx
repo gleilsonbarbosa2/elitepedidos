@@ -3,7 +3,7 @@ import '../../index.css';
 import { Calculator, ShoppingCart, Printer, AlertCircle, Package, Scale, Plus, Minus, Trash2, Search, Percent, CreditCard, Split, DollarSign } from 'lucide-react';
 import { PDVOperator } from '../../types/pdv';
 import { useStore2PDVCashRegister } from '../../hooks/useStore2PDVCashRegister';
-import { usePDVProducts } from '../../hooks/usePDV';
+import { useStore2Products } from '../../hooks/useStore2Products';
 import { useStore2Sales, useStore2Cart } from '../../hooks/useStore2Sales';
 import { useScale } from '../../hooks/useScale';
 import { PesagemModal } from '../PDV/PesagemModal';
@@ -16,7 +16,7 @@ interface Store2PDVSalesScreenProps {
 
 const Store2PDVSalesScreen: React.FC<Store2PDVSalesScreenProps> = ({ operator, scaleHook }) => {
   const { isOpen: isCashRegisterOpen, currentRegister, summary } = useStore2PDVCashRegister();
-  const { products, loading: productsLoading, searchProducts } = usePDVProducts();
+  const { products, loading: productsLoading, searchProducts } = useStore2Products();
   const { createSale, loading: salesLoading } = useStore2Sales();
   const { 
     items, 
