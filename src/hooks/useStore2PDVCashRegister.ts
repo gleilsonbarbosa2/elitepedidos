@@ -60,41 +60,6 @@ export const useStore2PDVCashRegister = () => {
       
       console.log('🔄 Buscando status do caixa da Loja 2...');
       
-      // Get store 2 ID first
-      const { data: store2, error: storeError } = await supabase
-        .from('stores')
-        .select('id')
-        .eq('code', 'LOJA2')
-        .single();
-      
-      if (storeError) {
-        console.error('Erro ao buscar Loja 2:', storeError);
-        // Create store 2 if it doesn't exist
-        const { data: newStore, error: createError } = await supabase
-          .from('stores')
-          .insert([{
-            name: 'Elite Açaí - Loja 2',
-            code: 'LOJA2',
-            password_hash: 'elite2024',
-            address: 'Rua Um, 1614-C – Residencial 1 – Cágado',
-            phone: '(85) 98904-1010',
-            is_active: true,
-            has_delivery: false,
-            has_pos_sales: true,
-            is_main_store: false
-          }])
-          .select()
-          .single();
-          
-        if (createError) {
-          throw createError;
-        }
-        
-        console.log('✅ Loja 2 criada:', newStore.id);
-      }
-      
-      const storeId = store2?.id || newStore?.id;
-      
       // Verificar se existe um caixa aberto para a Loja 2
       const { data: openRegister, error: openError } = await supabase
         .from('pdv2_cash_registers')
@@ -127,11 +92,32 @@ export const useStore2PDVCashRegister = () => {
         
         setEntries(entriesData || []);
         
+        console.log(`✅ Carregadas ${entriesData?.length || 0} movimentações de caixa da Loja 2`);
+        
+        // Debug das entradas
+        console.log('🔍 Entradas do caixa da Loja 2:', entriesData?.map(e => ({
+          type: e.type,
+          amount: e.amount,
+          description: e.description,
+          payment_method: e.payment_method
+        })));
+        
         // Calcular resumo manualmente para Loja 2
-        const salesTotal = entriesData?.filter(e => e.type === 'income' && e.description.includes('Venda')).reduce((sum, e) => sum + e.amount, 0) || 0;
+        const salesEntries = entriesData?.filter(e => e.type === 'income' && e.description.includes('Venda')) || [];
+        const salesTotal = salesEntries.reduce((sum, e) => sum + e.amount, 0);
+        
         const otherIncomeTotal = entriesData?.filter(e => e.type === 'income' && !e.description.includes('Venda')).reduce((sum, e) => sum + e.amount, 0) || 0;
         const expenseTotal = entriesData?.filter(e => e.type === 'expense').reduce((sum, e) => sum + e.amount, 0) || 0;
         const expectedBalance = openRegister.opening_amount + salesTotal + otherIncomeTotal - expenseTotal;
+        
+        console.log('📊 Resumo calculado da Loja 2:', {
+          opening_amount: openRegister.opening_amount,
+          salesTotal,
+          salesCount: salesEntries.length,
+          otherIncomeTotal,
+          expenseTotal,
+          expectedBalance
+        });
         
         setSummary({
           opening_amount: openRegister.opening_amount || 0,
@@ -142,12 +128,11 @@ export const useStore2PDVCashRegister = () => {
           expected_balance: expectedBalance,
           actual_balance: openRegister.closing_amount || expectedBalance,
           difference: (openRegister.closing_amount || expectedBalance) - expectedBalance,
-          sales_count: entriesData?.filter(e => e.type === 'income' && e.description.includes('Venda')).length || 0,
+          sales_count: salesEntries.length,
           delivery_total: 0, // Loja 2 não tem delivery
           delivery_count: 0,
           total_all_sales: salesTotal,
           sales: {}
-        });
       } else {
         console.log('ℹ️ Nenhum caixa da Loja 2 aberto no momento');
         setCurrentRegister(null);

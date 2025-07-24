@@ -21,9 +21,6 @@ const Store2CashRegisterMenu: React.FC = () => {
     entries,
     loading,
     error,
-    openCashRegister,
-    closeCashRegister,
-    addCashEntry,
     refreshData
   } = useStore2PDVCashRegister();
 
@@ -62,11 +59,30 @@ const Store2CashRegisterMenu: React.FC = () => {
     if (!openingAmount) return;
     
     try {
-      await openCashRegister(parseFloat(openingAmount));
+      console.log('🚀 Abrindo caixa da Loja 2 com valor:', parseFloat(openingAmount));
+      
+      const { data, error } = await supabase
+        .from('pdv2_cash_registers')
+        .insert([{
+          opening_amount: parseFloat(openingAmount),
+          opened_at: new Date().toISOString()
+        }])
+        .select()
+        .single();
+        
+      if (error) {
+        console.error('Erro ao abrir caixa da Loja 2:', error);
+        throw error;
+      }
+      
+      console.log('✅ Caixa da Loja 2 aberto com sucesso:', data.id);
+      await refreshData();
+      
       setShowOpenRegister(false);
       setOpeningAmount('');
     } catch (err) {
       console.error('Erro ao abrir caixa da Loja 2:', err);
+      alert('Erro ao abrir caixa. Tente novamente.');
     }
   };
 
@@ -89,18 +105,29 @@ const Store2CashRegisterMenu: React.FC = () => {
     
     try {
       console.log('🔒 Fechando caixa da Loja 2 com valor:', parseFloat(closingAmount));
-      const result = await closeCashRegister(parseFloat(closingAmount));
       
-      if (result.success) {
-        console.log('✅ Caixa da Loja 2 fechado com sucesso');
-        alert('Caixa fechado com sucesso!');
-        setShowCloseModal(false);
-        setClosingAmount('');
-        await refreshData();
-      } else {
-        console.error('❌ Erro ao fechar caixa:', result.error);
-        alert(`Erro ao fechar caixa: ${result.error}`);
+      const { data, error } = await supabase
+        .from('pdv2_cash_registers')
+        .update({
+          closing_amount: parseFloat(closingAmount),
+          closed_at: new Date().toISOString(),
+          difference: parseFloat(closingAmount) - (summary?.expected_balance || 0)
+        })
+        .eq('id', currentRegister.id)
+        .select()
+        .single();
+      
+      if (error) {
+        console.error('❌ Erro ao fechar caixa da Loja 2:', error);
+        alert(`Erro ao fechar caixa: ${error.message}`);
+        return;
       }
+      
+      console.log('✅ Caixa da Loja 2 fechado com sucesso');
+      alert('Caixa fechado com sucesso!');
+      setShowCloseModal(false);
+      setClosingAmount('');
+      await refreshData();
     } catch (err) {
       console.error('Erro ao fechar caixa da Loja 2:', err);
       alert('Erro ao fechar caixa. Tente novamente.');
@@ -116,12 +143,33 @@ const Store2CashRegisterMenu: React.FC = () => {
     if (!entryAmount || !entryDescription) return;
     
     try {
-      await addCashEntry({
+      console.log('💰 Adicionando entrada ao caixa da Loja 2:', {
         type: entryType,
         amount: parseFloat(entryAmount),
         description: entryDescription,
         payment_method: entryPaymentMethod
       });
+      
+      const { data, error } = await supabase
+        .from('pdv2_cash_entries')
+        .insert([{
+          register_id: currentRegister.id,
+          type: entryType,
+          amount: parseFloat(entryAmount),
+          description: entryDescription,
+          payment_method: entryPaymentMethod
+        }])
+        .select()
+        .single();
+      
+      if (error) {
+        console.error('Erro ao adicionar entrada da Loja 2:', error);
+        throw error;
+      }
+      
+      console.log('✅ Entrada da Loja 2 adicionada com sucesso:', data);
+      await refreshData();
+      
       setShowCashEntry(false);
       setEntryAmount('');
       setEntryDescription('');
@@ -129,6 +177,7 @@ const Store2CashRegisterMenu: React.FC = () => {
       setEntryPaymentMethod('dinheiro');
     } catch (err) {
       console.error('Erro ao adicionar entrada da Loja 2:', err);
+      alert('Erro ao adicionar entrada. Tente novamente.');
     }
   };
 
