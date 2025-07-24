@@ -399,7 +399,6 @@ const Store2ProductsManager: React.FC = () => {
                     className="w-20 h-20 object-cover rounded-lg border border-gray-300"
                   />
                   <button
-                      category: e.target.value as Store2Product['category']
                     onClick={() => setShowImageUpload(true)}
                     className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors"
                   >
