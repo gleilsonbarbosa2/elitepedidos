@@ -475,6 +475,47 @@ const Store2CashRegisterMenu: React.FC = () => {
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
                   placeholder="0,00"
                 />
+                
+                {/* Aviso de diferença */}
+                {closingAmount && parseFloat(closingAmount) !== (summary?.expected_balance || 0) && (
+                  <div className={`mt-2 p-3 rounded-lg border ${
+                    parseFloat(closingAmount) > (summary?.expected_balance || 0)
+                      ? 'bg-green-50 border-green-200'
+                      : 'bg-red-50 border-red-200'
+                  }`}>
+                    <div className="flex items-center gap-2">
+                      <AlertCircle size={16} className={
+                        parseFloat(closingAmount) > (summary?.expected_balance || 0)
+                          ? 'text-green-600'
+                          : 'text-red-600'
+                      } />
+                      <div>
+                        <p className={`text-sm font-medium ${
+                          parseFloat(closingAmount) > (summary?.expected_balance || 0)
+                            ? 'text-green-800'
+                            : 'text-red-800'
+                        }`}>
+                          {parseFloat(closingAmount) > (summary?.expected_balance || 0) ? '💰 Sobra no Caixa' : '⚠️ Falta no Caixa'}
+                        </p>
+                        <p className={`text-sm ${
+                          parseFloat(closingAmount) > (summary?.expected_balance || 0)
+                            ? 'text-green-700'
+                            : 'text-red-700'
+                        }`}>
+                          Diferença: {formatPrice(Math.abs(parseFloat(closingAmount) - (summary?.expected_balance || 0)))}
+                          {parseFloat(closingAmount) > (summary?.expected_balance || 0) ? ' a mais' : ' a menos'}
+                        </p>
+                        <p className={`text-xs mt-1 ${
+                          parseFloat(closingAmount) > (summary?.expected_balance || 0)
+                            ? 'text-green-600'
+                            : 'text-red-600'
+                        }`}>
+                          Saldo esperado: {formatPrice(summary?.expected_balance || 0)}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="flex gap-2">
