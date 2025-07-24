@@ -18,7 +18,6 @@ import Store2ReportsPage from './Store2ReportsPage';
 
 const Store2ManagementPage: React.FC = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<'users' | 'products' | 'settings'>('users');
   const [activeTab, setActiveTab] = useState<'users' | 'products' | 'settings' | 'reports'>('users');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [username, setUsername] = useState('');
