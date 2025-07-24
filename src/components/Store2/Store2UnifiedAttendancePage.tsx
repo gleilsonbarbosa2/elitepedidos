@@ -169,21 +169,6 @@ const Store2UnifiedAttendancePage: React.FC<Store2UnifiedAttendancePageProps> = 
               Relatórios
             </button>
 
-            <button
-              onClick={() => window.location.href = '/gerenciamento_loja2'}
-              className="px-6 py-3 rounded-lg font-medium transition-colors flex items-center gap-2 bg-gray-100 text-gray-700 hover:bg-gray-200"
-            >
-              <Settings size={20} />
-              Gerenciamento
-            </button>
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="transition-all duration-300 print:hidden">
-          {activeTab === 'sales' && <Store2PDVSalesScreen operator={operator} scaleHook={scale} />}
-          {activeTab === 'cash' && <Store2CashRegisterMenu />}
-          {activeTab === 'settings' && <Store2Settings />}
         </div>
       </div>
     </div>
