@@ -14,7 +14,11 @@ import PDV2DailyCashReport from '../PDV2/PDV2DailyCashReport';
 import PDV2CashReportWithDetails from '../PDV2/PDV2CashReportWithDetails';
 import PDV2CashReportWithDateFilter from '../PDV2/PDV2CashReportWithDateFilter';
 
-const Store2ReportsPage: React.FC = () => {
+interface Store2ReportsPageProps {
+  embedded?: boolean;
+}
+
+const Store2ReportsPage: React.FC<Store2ReportsPageProps> = ({ embedded = false }) => {
   const navigate = useNavigate();
   const [activeReport, setActiveReport] = useState<'daily' | 'details' | 'period'>('daily');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -56,7 +60,7 @@ const Store2ReportsPage: React.FC = () => {
   };
 
   // Se não estiver autenticado, mostrar tela de login
-  if (!isAuthenticated) {
+  if (!isAuthenticated && !embedded) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-500 flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
@@ -188,6 +192,64 @@ const Store2ReportsPage: React.FC = () => {
         return <PDV2DailyCashReport />;
     }
   };
+
+  // Se for embedded, não mostrar header e usar autenticação automática
+  if (embedded) {
+    return (
+      <div className="space-y-6">
+        {/* Navigation Tabs */}
+        <div className="bg-white rounded-xl shadow-sm p-4">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+              <BarChart3 size={20} className="text-gray-600" />
+              Relatórios de Caixa
+            </h2>
+            <div className="text-sm text-gray-500">
+              Dados exclusivos da Loja 2
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {reports.map((report) => {
+              const Icon = report.icon;
+              const isActive = activeReport === report.id;
+              
+              return (
+                <button
+                  key={report.id}
+                  onClick={() => setActiveReport(report.id)}
+                  className={`p-4 rounded-lg border-2 transition-all duration-200 text-left ${
+                    isActive
+                      ? `${report.color} text-white border-transparent shadow-lg transform scale-105`
+                      : 'bg-white text-gray-700 border-gray-200 hover:border-gray-300 hover:shadow-md'
+                  }`}
+                >
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className={`rounded-full p-2 ${
+                      isActive ? 'bg-white/20' : 'bg-gray-100'
+                    }`}>
+                      <Icon size={20} className={isActive ? 'text-white' : 'text-gray-600'} />
+                    </div>
+                    <h3 className="font-semibold">{report.label}</h3>
+                  </div>
+                  <p className={`text-sm ${
+                    isActive ? 'text-white/80' : 'text-gray-500'
+                  }`}>
+                    {report.description}
+                  </p>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Report Content */}
+        <div className="transition-all duration-300">
+          {renderReport()}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
