@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import '../../index.css';
 import { Plus, Search, Edit3, Trash2, Package, Scale, Eye, EyeOff, Image as ImageIcon, Save, X, Upload, Check } from 'lucide-react';
-import { PDVProduct, usePDVProducts } from '../../hooks/usePDV';
+import { useStore2Products, Store2Product } from '../../hooks/useStore2Products';
 import { useImageUpload } from '../../hooks/useImageUpload';
 import ImageUploadModal from '../Admin/ImageUploadModal';
 
 const Store2ProductsManager: React.FC = () => {
-  const { products, loading, createProduct, updateProduct, deleteProduct, searchProducts } = usePDVProducts();
+  const { products, loading, createProduct, updateProduct, deleteProduct, searchProducts } = useStore2Products();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [editingProduct, setEditingProduct] = useState<PDVProduct | null>(null);
+  const [editingProduct, setEditingProduct] = useState<Store2Product | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [saving, setSaving] = useState(false);
   const [showImageUpload, setShowImageUpload] = useState(false);
@@ -399,7 +399,7 @@ const Store2ProductsManager: React.FC = () => {
                     className="w-20 h-20 object-cover rounded-lg border border-gray-300"
                   />
                   <button
-                    type="button"
+                      category: e.target.value as Store2Product['category']
                     onClick={() => setShowImageUpload(true)}
                     className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors"
                   >

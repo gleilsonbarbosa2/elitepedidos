@@ -12,8 +12,8 @@ import {
   Printer
 } from 'lucide-react';
 import Store2UsersManager from './Store2UsersManager';
-import Store2ProductsManager from './Store2ProductsManager';
 import Store2Settings from './Store2Settings';
+import Store2ProductsManager from './Store2ProductsManager';
 
 const Store2ManagementPage: React.FC = () => {
   const navigate = useNavigate();
@@ -182,25 +182,7 @@ const Store2ManagementPage: React.FC = () => {
       case 'users':
         return <Store2UsersManager />;
       case 'products':
-        return (
-          <div className="bg-white rounded-xl shadow-sm p-6">
-            <div className="text-center py-8">
-              <Package size={48} className="mx-auto text-blue-300 mb-4" />
-              <h3 className="text-lg font-medium text-blue-800 mb-2">
-                Produtos Compartilhados
-              </h3>
-              <p className="text-blue-700 mb-4">
-                A Loja 2 usa os mesmos produtos da Loja 1 para manter consistência.
-              </p>
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-md mx-auto">
-                <p className="text-sm text-blue-600">
-                  <strong>Para gerenciar produtos:</strong><br/>
-                  Acesse o sistema principal em <code>/pdv</code> ou <code>/administrativo</code>
-                </p>
-              </div>
-            </div>
-          </div>
-        );
+        return <Store2ProductsManager />;
       case 'settings':
         return <Store2Settings />;
       default:
