@@ -125,7 +125,7 @@ const Store2CashRegisterMenu: React.FC = () => {
       }
       
       console.log('✅ Caixa da Loja 2 fechado com sucesso');
-      alert('Caixa fechado com sucesso!');
+      showSuccessNotification();
       setShowCloseModal(false);
       setClosingAmount('');
       await refreshData();
@@ -133,6 +133,92 @@ const Store2CashRegisterMenu: React.FC = () => {
       console.error('Erro ao fechar caixa da Loja 2:', err);
       alert('Erro ao fechar caixa. Tente novamente.');
     }
+  };
+  
+  const showSuccessNotification = () => {
+    const notification = document.createElement('div');
+    notification.className = 'fixed top-4 right-4 z-50 transform transition-all duration-500 ease-out translate-x-full';
+    notification.innerHTML = `
+      <div class="bg-white rounded-2xl shadow-2xl border border-green-200 p-6 max-w-sm w-full">
+        <div class="flex items-start gap-4">
+          <div class="bg-gradient-to-br from-green-400 to-emerald-500 rounded-full p-3 flex-shrink-0 shadow-lg">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+          </div>
+          <div class="flex-1">
+            <h3 class="text-xl font-bold text-gray-900 mb-2">
+              ✅ Caixa Fechado com Sucesso!
+            </h3>
+            <p class="text-gray-600 mb-4">
+              O caixa da Loja 2 foi fechado e todas as movimentações foram registradas.
+            </p>
+            <div class="bg-gradient-to-r from-blue-50 to-green-50 border border-blue-200 rounded-lg p-3 mb-4">
+              <div class="flex items-center gap-2 mb-2">
+                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                </svg>
+                <span class="font-semibold text-blue-800">Resumo Final:</span>
+              </div>
+              <div class="space-y-1 text-sm">
+                <div class="flex justify-between">
+                  <span class="text-blue-700">Valor de fechamento:</span>
+                  <span class="font-bold text-blue-900">${closingAmount ? parseFloat(closingAmount).toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'}) : 'R$ 0,00'}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-blue-700">Saldo esperado:</span>
+                  <span class="font-medium text-blue-800">${(summary?.expected_balance || 0).toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}</span>
+                </div>
+                ${closingAmount && parseFloat(closingAmount) !== (summary?.expected_balance || 0) ? `
+                <div class="flex justify-between pt-2 border-t border-blue-200">
+                  <span class="text-blue-700">Diferença:</span>
+                  <span class="font-bold ${parseFloat(closingAmount) > (summary?.expected_balance || 0) ? 'text-green-600' : 'text-red-600'}">
+                    ${Math.abs(parseFloat(closingAmount) - (summary?.expected_balance || 0)).toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}
+                    ${parseFloat(closingAmount) > (summary?.expected_balance || 0) ? ' (sobra)' : ' (falta)'}
+                  </span>
+                </div>
+                ` : ''}
+              </div>
+            </div>
+            <div class="flex gap-2">
+              <button 
+                onclick="window.location.href='/relatorios_loja2'" 
+                class="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 transform hover:scale-105 shadow-md hover:shadow-lg"
+              >
+                📊 Ver Relatórios
+              </button>
+              <button 
+                onclick="this.closest('.fixed').remove()" 
+                class="flex-1 bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 transform hover:scale-105 shadow-md hover:shadow-lg"
+              >
+                ✅ OK
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-400 to-emerald-500 rounded-t-2xl"></div>
+      </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Animate in
+    setTimeout(() => {
+      notification.classList.remove('translate-x-full');
+      notification.classList.add('translate-x-0');
+    }, 100);
+    
+    // Auto remove after 10 seconds
+    setTimeout(() => {
+      if (document.body.contains(notification)) {
+        notification.classList.add('translate-x-full');
+        setTimeout(() => {
+          if (document.body.contains(notification)) {
+            document.body.removeChild(notification);
+          }
+        }, 500);
+      }
+    }, 10000);
   };
   
   const handleCancelClose = () => {
