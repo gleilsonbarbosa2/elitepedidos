@@ -17,6 +17,18 @@ const Store2ProductsManager: React.FC = () => {
   
   const { getProductImage, saveImageToProduct } = useImageUpload();
 
+  const filteredProducts = React.useMemo(() => {
+    let result = searchTerm 
+      ? searchProducts(searchTerm)
+      : products;
+    
+    if (selectedCategory !== 'all') {
+      result = result.filter(p => p.category === selectedCategory);
+    }
+    
+    return result;
+  }, [products, searchProducts, searchTerm, selectedCategory]);
+
   const categories = [
     { id: 'all', label: 'Todas as Categorias' },
     { id: 'acai', label: 'Açaí' },
@@ -48,18 +60,6 @@ const Store2ProductsManager: React.FC = () => {
 
     loadProductImages();
   }, [filteredProducts, getProductImage]);
-
-  const filteredProducts = React.useMemo(() => {
-    let result = searchTerm 
-      ? searchProducts(searchTerm)
-      : products;
-    
-    if (selectedCategory !== 'all') {
-      result = result.filter(p => p.category === selectedCategory);
-    }
-    
-    return result;
-  }, [products, searchProducts, searchTerm, selectedCategory]);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('pt-BR', {
