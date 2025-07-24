@@ -335,7 +335,6 @@ export const useStore2PDVCashRegister = () => {
     isOpen: !!currentRegister,
     openCashRegister,
     closeCashRegister,
-    closeCashRegister,
     addCashEntry,
     refreshData: fetchCashRegisterStatus
   };
